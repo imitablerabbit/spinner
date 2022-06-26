@@ -1,7 +1,7 @@
 // Spinner class that will render the spinner onto a given canvas. The spinner
 // will be rendered as a circle with a number of segments. The spinner will
 // be updated based on the refresh rate of the object.
-function Spinner(canvas, spinnerRot, spinnerSpeedDec) {
+function Spinner(canvas, segmentNames, segmentColors) {
     // We must at least have a canvas in order to draw the spinner.
     if (canvas == null)
         return;
@@ -12,14 +12,31 @@ function Spinner(canvas, spinnerRot, spinnerSpeedDec) {
     this.centerX = canvas.width / 2;
     this.centerY = canvas.height / 2;
     this.radius = (canvas.width / 2) - 20;
+
+    // Randomise the position on the spinner. This should also help make sure
+    // that other results are closer to random rather than starting in the same
+    // place.
+    this.spinnerRot = Math.random() * Math.PI * 2;
+
+    // Randomly generate the speed decay rate. This will mean that the spinner
+    // will stop at random locations inside the circle.
+    var minSpinnerSpeedDec = 0.0002;
+    var maxSpinnerSpeedDec = 0.0004;
+    var spinnerSpeedDecDiff = maxSpinnerSpeedDec - minSpinnerSpeedDec;
+    this.spinnerSpeedDec = (Math.random() * spinnerSpeedDecDiff) + minSpinnerSpeedDec;
     
-    // Check if the user has provided a spinner rotation value and a spinnerSpeedDec.
-    // If they have then we will use that value. If they have not then we will use
-    // the default value.
-    if (spinnerRot != null)
-        this.spinnerRot = spinnerRot;
-    if (spinnerSpeedDec != null)
-        this.spinnerSpeedDec = spinnerSpeedDec;
+    // Check if segmentNames and segmentColors are valid.
+    if (segmentNames != null)
+        this.segmentNames = segmentNames;
+    if (segmentColors != null)
+        this.segmentColors = segmentColors;
+
+    // Add an event listener to the canvas to listen for mouse clicks. This will
+    // spin the spinner.
+    this.canvas.addEventListener("click", function(event) {
+        this.spin();
+    }.bind(this));
+            
 }
 
 // ----------------------------------------------------------------------------
@@ -44,9 +61,6 @@ Spinner.prototype.radius = 20;
 // inside the circle.
 Spinner.prototype.textInsetPercentage = 0.8;
 
-// The number of segments that the spinner is divided into.
-Spinner.prototype.numOfSegments = 12;
-
 // The rate at which the spinner position update function is called.
 Spinner.prototype.spinnerUpdateRate = 60;
 
@@ -70,7 +84,22 @@ Spinner.prototype.hasSpinnerStopped = false;
 
 // updateInterval is the interval handle for the update function. This is first
 // created in the start function and then reset when the stop function is called.
-Spinner.prototype.updateInterval = null; 
+Spinner.prototype.updateInterval = null;
+
+// segmentNames is an array of strings that will be printed inside each segment.
+// The number of strings in the array dictates the number of segments.
+Spinner.prototype.segmentNames = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+// segmentColors is an array of colors that will be used to draw the segments.
+// Each segment will be drawn with a different color from the array based on the
+// index of the segment. If the index is greater than the length of the array
+// then the index will be modulus the length of the array. This will ensure that
+// the colors are always in the array. If there are more colors than segments
+// then the colors will be ignored when they exceed the number of segments.
+Spinner.prototype.segmentColors = [
+    "#FF0000", "#00FF00", "#0000FF", "#FFFF00",
+    "#00FFFF", "#FF00FF", "#C0C0C0", "#000000"
+];
 
 // ----------------------------------------------------------------------------
 // Spinner Functions
@@ -79,6 +108,7 @@ Spinner.prototype.updateInterval = null;
 // Starts the spinner. This will render the spinner on the canvas and then call
 // the update function every spinnerUpdateRate frames.
 Spinner.prototype.start = function() {
+    this.reset();
     updateInterval = setInterval(function(self) {
         self.update();
     }, 1000 / this.refreshRate, this);
@@ -88,14 +118,34 @@ Spinner.prototype.start = function() {
 Spinner.prototype.stop = function() {
     clearInterval(updateInterval);
     this.updateInterval = null;
-    this.reset();
 }
 
 // Resets the spinner. This will reset the spinner position and speed.
 Spinner.prototype.reset = function() {
-    this.spinnerRot = Math.PI;
+    // Randomise the position on the spinner. This should also help make sure
+    // that other results are closer to random rather than starting in the same
+    // place.
+    this.spinnerRot = Math.random() * Math.PI * 2;
+
+    // Randomly generate the speed decay rate. This will mean that the spinner
+    // will stop at random locations inside the circle.
+    var minSpinnerSpeedDec = 0.0002;
+    var maxSpinnerSpeedDec = 0.0004;
+    var spinnerSpeedDecDiff = maxSpinnerSpeedDec - minSpinnerSpeedDec;
+    this.spinnerSpeedDec = (Math.random() * spinnerSpeedDecDiff) + minSpinnerSpeedDec;
     this.spinnerSpeed = 0.1;
+    
+    // Make sure to reset the stop state of the spinner. This will allow us to
+    // continue rendering the spinner.
     this.hasSpinnerStopped = false;
+}
+
+// Spin the wheel from scratch. This will reset the spinner position and speed
+// and then start the spinner.
+Spinner.prototype.spin = function() {
+    this.stop();
+    this.reset();
+    this.start();
 }
 
 // update will update the spinner position and draw the spinner continuously
@@ -124,8 +174,8 @@ Spinner.prototype.drawSpinner = function() {
     this.context.stroke();
 
     // Draw the segments
-    for (var i = 0; i < this.numOfSegments; i++) {
-        var rotationIndividual = (Math.PI * 2 / this.numOfSegments);
+    var rotationIndividual = (Math.PI * 2 / this.segmentNames.length);
+    for (var i = 0; i < this.segmentNames.length; i++) {
         var rotation = i * rotationIndividual;
 
         var circumPointX = this.centerX + Math.sin(rotation) * this.radius;
@@ -148,15 +198,15 @@ Spinner.prototype.drawSpinner = function() {
         this.context.rotate(textRotation);
         this.context.font = this.canvas.height / 15 + "px sans-serif";
         this.context.textAlign = "center";
-        this.context.fillStyle = "black";
-        this.context.fillText(i, 0, 0);
+        this.context.fillStyle = this.segmentColors[i % this.segmentColors.length];
+        this.context.fillText(this.segmentNames[i], 0, 0);
 
         this.context.restore();
     }
 
     // Draw the spinner on the canvas.
     var spinnerPointX = this.centerX + Math.sin(this.spinnerRot) * this.radius;
-    var spinnerPointY = this.centerY + Math.cos(this.spinnerRot) * this.radius;
+    var spinnerPointY = this.centerY - Math.cos(this.spinnerRot) * this.radius;
     this.context.save();
     this.context.beginPath();
     this.context.moveTo(this.centerX, this.centerY);
@@ -174,13 +224,38 @@ Spinner.prototype.updateSpinnerPosition = function() {
     if (this.hasSpinnerStopped)
         return;
 
-    // spinnerRot += spinnerSpeed; // anti-clockwise
-    this.spinnerRot -= this.spinnerSpeed; // clockwise
+    // Constrain the spinner rotation to the range of 0 to 2PI.
+    this.spinnerRot += this.spinnerSpeed;
+    if (this.spinnerRot < 0)
+        this.spinnerRot += Math.PI * 2;
+    else if (this.spinnerRot > Math.PI * 2)
+        this.spinnerRot -= Math.PI * 2;
+
     this.spinnerSpeed -= this.spinnerSpeedDec;
     if (this.spinnerSpeed < 0) {
-        // TODO: We can trigger a spinner stopped event here. During that event
-        // we can detect the spinners location and print it out on the screen.
-
+        var index = this.detectSegment();   
+        this.onStop(index);
         this.hasSpinnerStopped = true;
     }
 }
+
+// detectSegment will detect which segment the spinner is currently on. This
+// will return the index of the segment that the spinner is on. We detect this
+// by detecting the angle of the spinner vs the proportion of the circumference
+// of the wheel.
+Spinner.prototype.detectSegment = function() {
+    var rotation = this.spinnerRot;
+    var proportion = rotation / (Math.PI * 2);
+    var index = Math.floor(proportion * this.segmentNames.length);
+    return index;
+}
+
+// Callback function that is called when the spinner has stopped and landed on
+// a segment. This will be passed the index of the segment that the spinner
+// landed on. By default, this function will print the segment name and index
+// to the console.
+Spinner.prototype.onStop = function(index) {
+    console.log("Spinner stopped on index " + index +
+                ", segment " +this.segmentNames[index]);
+}
+
