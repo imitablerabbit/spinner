@@ -66,17 +66,6 @@ function getSpinnerData() {
         segmentColorsString = defaultSegmentColors;
     segmentColors = segmentColorsString.split(",");
 
-    // Randomise the position on the spinner. This should also help make sure
-    // that other results are closer to random rather than starting in the same
-    // place.
-    spinnerRot = Math.random() * Math.PI * 2;
-
-    // Randomly generate the speed decay rate. This will mean that the spinner
-    // will stop at random locations inside the circle.
-    var minSpinnerSpeedDec = 0.0002;
-    var maxSpinnerSpeedDec = 0.0004;
-    var spinnerSpeedDecDiff = maxSpinnerSpeedDec - minSpinnerSpeedDec;
-    spinnerSpeedDec = (Math.random() * spinnerSpeedDecDiff) + minSpinnerSpeedDec;
 }
 
 // Repopulate the form data based on any query parameters. If the query parameters
