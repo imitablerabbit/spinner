@@ -12,6 +12,11 @@ var canvas = document.getElementById('spinner');
 // Segment names text box. Each segment name is separated by a comma.
 var segmentNamesTextbox = document.getElementById('segmentNames');
 
+// Ignore names text box. Each ignore name is separated by a comma. The ignore
+// names are used to ignore segments that we do not want to land on. If a value
+// is landed on in the ignore names then the spinner will spin again.
+var ignoreNamesTextbox = document.getElementById('ignoreNames');
+
 // Segment colors text box. Each segment will be assigned a color based on the
 // values in this text box. Each value is separated by a comma. If there are
 // less values than segments then the colors will be repeated. If there are more
@@ -22,10 +27,12 @@ var segmentColorsTextbox = document.getElementById('segmentColors');
 // Spinner Variables
 // ----------------------------------------------------------------------------
 
-var defaultSegmentNames = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+var defaultSegmentNames = ["Mark", "Sam","Tom","Carl","Jason","Ed","Bo"];
+var defaultIgnoreNames = ["Mark"];
 var defaultSegmentColors = ["red", "green"];
 
 var segmentNames = [];
+var ignoreNames = [];
 var segmentColors = [];
 
 var spinnerRot = Math.PI;
@@ -45,26 +52,33 @@ function main() {
     console.log("Spinner Speed Dec: " + spinnerSpeedDec);
 
     // Create the spinner object with the canvas and the spinner rotation.
-    var spinner = new Spinner(canvas, segmentNames, segmentColors);
+    var spinner = new Spinner(canvas, segmentNames, ignoreNames, segmentColors);
     spinner.start();
 }
 
 // Gather the spinner data from the query parameters. If the query parameters
 // are not found then the default values are used.
 function getSpinnerData() {
-    // Get the segment names from the query parameters. The segment names are
-    // found under the "segmentNames" query parameter. Each name is split by a
-    // comma.
+    // Get the segment names, ignore names and colors from the query parameters.
+    // Each value is split by a comma.
     var params = new URLSearchParams(window.location.search);
     var segmentNamesString = params.get('segmentNames');
     if (segmentNamesString == null)
-        segmentNamesString = defaultSegmentNames;
-    segmentNames = segmentNamesString.split(",");
+        segmentNames = defaultSegmentNames;
+    else 
+        segmentNames = segmentNamesString.split(",");
+
+    var ignoreNamesString = params.get('ignoreNames');
+    if (ignoreNamesString == null)
+        ignoreNames = defaultIgnoreNames;
+    else 
+        ignoreNames = ignoreNamesString.split(",");   
 
     var segmentColorsString = params.get('segmentColors');
     if (segmentColorsString == null)
-        segmentColorsString = defaultSegmentColors;
-    segmentColors = segmentColorsString.split(",");
+        segmentColors = defaultSegmentColors;
+    else
+        segmentColors = segmentColorsString.split(",");
 
 }
 
@@ -73,8 +87,10 @@ function getSpinnerData() {
 function populateFormData() {
     // Encode the segment names and colors into a string joined by commas.
     var segmentNamesString = segmentNames.join(",");
+    var ignoreNamesString = ignoreNames.join(",");
     var segmentColorsString = segmentColors.join(",");
     segmentNamesTextbox.value = segmentNamesString;
+    ignoreNamesTextbox.value = ignoreNamesString;
     segmentColorsTextbox.value = segmentColorsString;
 }
 
@@ -82,16 +98,3 @@ function populateFormData() {
 document.addEventListener('DOMContentLoaded', function() {
     main();
 }, false);
-
-// TODO: Detect the current quadrant of the spinner using a bounding box of the
-// outer edges of each spinner section and the spinners coordinate on the
-// circumference. We can generate the segment collision boxes before the spinner
-// is run and then check each one during the spinner update function. We can
-// optimise the code by only checking the upcoming spinner collision as we know
-// which direction the spinner is moving.
-
-// TODO: Do not reduce the spinner speed whilst we are inside a blacklisted
-// segment. This means that the spinner will never stop inside a particular
-// zone.
-
-// TODO: Add some color to the spinner.
