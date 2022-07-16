@@ -1,7 +1,7 @@
 // Spinner class that will render the spinner onto a given canvas. The spinner
 // will be rendered as a circle with a number of segments. The spinner will
 // be updated based on the refresh rate of the object.
-function Spinner(canvas, segmentNames, segmentColors) {
+function Spinner(canvas, segmentNames, ignoreNames, segmentColors) {
     // We must at least have a canvas in order to draw the spinner.
     if (canvas == null)
         return;
@@ -28,6 +28,8 @@ function Spinner(canvas, segmentNames, segmentColors) {
     // Check if segmentNames and segmentColors are valid.
     if (segmentNames != null)
         this.segmentNames = segmentNames;
+    if (ignoreNames != null)
+        this.ignoreNames = ignoreNames;
     if (segmentColors != null)
         this.segmentColors = segmentColors;
 
@@ -88,7 +90,13 @@ Spinner.prototype.updateInterval = null;
 
 // segmentNames is an array of strings that will be printed inside each segment.
 // The number of strings in the array dictates the number of segments.
-Spinner.prototype.segmentNames = ["A", "B", "C", "D", "E", "F", "G", "H"];
+Spinner.prototype.segmentNames = ["Mark", "Sam","Tom","Carl","Jason","Ed","Bo"];
+
+// ignoreNames is an array of strings that will be ignored when selecting a
+// random segment. This is included as a gag to prevent a segment being selected
+// but also displaying it as an option. If a segment that is in the ignoreNames
+// array is selected, then the spinner will spin again.
+Spinner.prototype.ignoreNames = ["Mark"];
 
 // segmentColors is an array of colors that will be used to draw the segments.
 // Each segment will be drawn with a different color from the array based on the
@@ -233,7 +241,14 @@ Spinner.prototype.updateSpinnerPosition = function() {
 
     this.spinnerSpeed -= this.spinnerSpeedDec;
     if (this.spinnerSpeed < 0) {
-        var index = this.detectSegment();   
+        var index = this.detectSegment();
+        var segmentValue = this.segmentNames[index];
+        for (var i = 0; i < this.ignoreNames.length; i++) {
+            if (segmentValue == this.ignoreNames[i]) {
+                this.reset();
+                return;
+            }
+        }
         this.onStop(index);
         this.hasSpinnerStopped = true;
     }
@@ -255,7 +270,7 @@ Spinner.prototype.detectSegment = function() {
 // landed on. By default, this function will print the segment name and index
 // to the console.
 Spinner.prototype.onStop = function(index) {
-    console.log("Spinner stopped on index " + index +
-                ", segment " +this.segmentNames[index]);
+    console.log("Spinner stopped on index '" + index +
+                "', segment '" + this.segmentNames[index] + "'");
 }
 

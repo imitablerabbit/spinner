@@ -1,7 +1,94 @@
-#spinner {
-    border: 1px solid black;
+.wrapper {
+    display: block;
 }
 
-.row {
+#sidebar-toggle {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    top: 10px;
+    right: -35px;
+
+    z-index: 4;
+    background-color: white;
+    border: solid 1px black;
+    border-left: none;
+}
+
+/*
+Blanking out the touching border top and bottom of the sidebar toggle
+button by adding an empty before and positioning to the left.
+*/
+#sidebar-toggle::before {
+    content: "";
+    position: absolute;
+    width: 3px;
+    height: 35px;
+    left: -2px;
+    top: -1px;
+    background-color: white;
+}
+
+#sidebar {
+    position: fixed;
+    min-width: 250px;
+    max-width: 250px;
+    height: 100vh;
+
+    top: 0px;
+    left: -250px;
+    transition: all 0.5s ease-in-out;
+
+    z-index: 3;
+    background-color: white;
+    border-right: 2px solid black;
+
+    padding: 10px;
+}
+
+#sidebar.active {
+    left: 0;
+}
+
+.sidebar-header {
+    text-align: center;
+}
+
+#overlay {
+    visibility: hidden;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+}
+
+#overlay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+#content {
+    z-index: 1;
+    position: fixed;
+    display: block;
+    width: 100%;
+    margin: 20px;
+    text-align: center;
+}
+
+#content > h1 {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+#spinner {
+    width: 500px;
+}
+
+.form-group {
     margin-bottom: 10px;
 }
