@@ -1,73 +1,11 @@
+body {
+    margin: 0px;
+}
+
 .wrapper {
     display: block;
-}
-
-#sidebar-toggle {
-    position: absolute;
-    width: 35px;
-    height: 35px;
-    top: 10px;
-    right: -35px;
-
-    z-index: 4;
-    background-color: white;
-    border: solid 1px black;
-    border-left: none;
-}
-
-/*
-Blanking out the touching border top and bottom of the sidebar toggle
-button by adding an empty before and positioning to the left.
-*/
-#sidebar-toggle::before {
-    content: "";
-    position: absolute;
-    width: 3px;
-    height: 35px;
-    left: -2px;
-    top: -1px;
-    background-color: white;
-}
-
-#sidebar {
-    position: fixed;
-    min-width: 250px;
-    max-width: 250px;
-    height: 100vh;
-
-    top: 0px;
-    left: -250px;
-    transition: all 0.5s ease-in-out;
-
-    z-index: 3;
-    background-color: white;
-    border-right: 2px solid black;
-
-    padding: 10px;
-}
-
-#sidebar.active {
-    left: 0;
-}
-
-.sidebar-header {
-    text-align: center;
-}
-
-#overlay {
-    visibility: hidden;
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 2;
-    opacity: 0;
-    transition: all 0.5s ease-in-out;
-}
-
-#overlay.active {
-    visibility: visible;
-    opacity: 1;
+    margin: 0px;
+    padding: 0px;
 }
 
 #content {
@@ -79,12 +17,6 @@ button by adding an empty before and positioning to the left.
     text-align: center;
 }
 
-#content > h1 {
-    display: block;
-    width: 100%;
-    text-align: center;
-}
-
 #spinner {
     width: 500px;
 }
@@ -92,3 +24,49 @@ button by adding an empty before and positioning to the left.
 .form-group {
     margin-bottom: 10px;
 }
+
+#title-container {
+    display: block;
+    margin: 20px;
+    padding: 0px;
+    text-align: center;
+}
+
+#title {
+    display: inline-block;
+    position: relative;
+
+    font-size: 50px;
+    font-weight: bold;
+    box-shadow: 0px 0px 10px #000;
+
+    /* text shadow */
+    text-shadow: 0px 0px 10px #000;
+
+    
+    transition: all 0.5s ease-in-out;
+}
+
+/* Animation to move the element left and right periodically */
+#title.bandicoot {
+    transform-style: preserve-3d;
+    animation-timing-function: linear;
+    animation: bandicoot 1s infinite;
+}
+
+/* Key frames for the animation */
+@keyframes bandicoot {
+    0% {
+        left: -100px;
+        transform: rotate3d(1, 1, 1, -30deg);
+    }
+    50% {
+        left: 100px;
+        transform: rotate3d(1, 1, 1, 30deg);
+    }
+    100% {
+        left: -100px;
+        transform: rotate3d(1, 1, 1, -30deg);
+    }
+}
+

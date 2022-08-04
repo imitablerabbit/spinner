@@ -10,18 +10,18 @@ var canvas = document.getElementById('spinner');
 // ----------------------------------------------------------------------------
 
 // Segment names text box. Each segment name is separated by a comma.
-var segmentNamesTextbox = document.getElementById('segmentNames');
+var segmentNamesTextbox = document.getElementById('segment-names');
 
 // Ignore names text box. Each ignore name is separated by a comma. The ignore
 // names are used to ignore segments that we do not want to land on. If a value
 // is landed on in the ignore names then the spinner will spin again.
-var ignoreNamesTextbox = document.getElementById('ignoreNames');
+var ignoreNamesTextbox = document.getElementById('ignore-names');
 
 // Segment colors text box. Each segment will be assigned a color based on the
 // values in this text box. Each value is separated by a comma. If there are
 // less values than segments then the colors will be repeated. If there are more
 // values than segments then the extra values will be ignored.
-var segmentColorsTextbox = document.getElementById('segmentColors');
+var segmentColorsTextbox = document.getElementById('segment-colors');
 
 // ----------------------------------------------------------------------------
 // Spinner Variables

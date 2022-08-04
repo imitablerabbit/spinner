@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var sidebarToggle = $('#sidebar-toggle');
+    var sidebarToggle = $('#hamburger-toggle');
     var sidebar = $('#sidebar');
     var overlay = $('#overlay');
 
@@ -10,19 +10,15 @@ $(document).ready(function () {
         // Toggle the class of the sidebar elements.
         sidebar.toggleClass('active');
         overlay.toggleClass('active');
-    
-        // Toggle the class of the menu button.
         sidebarToggle.toggleClass('active');
     
-        // Change the text of the menu button.
         if (sidebarToggle.hasClass('active')) {
-            sidebarToggle.text("<<");
+            // Replace it with the red cross emoji
+            sidebarToggle.html('&#x274C;');
         } else {
-            sidebarToggle.text(">>");
+            // Replace it with the hamburger emoji.
+            sidebarToggle.html("&#127828;");
         }
-    
-        $('.collapse.in').toggleClass('in');
-        $('a[aria-expanded=true]').attr('aria-expanded', 'false');
     }
 });
 
